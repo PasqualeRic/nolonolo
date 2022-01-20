@@ -1,0 +1,77 @@
+exports.insert = async function(data, credentials){
+	const mongouri = `mongodb://${credentials.user}:${credentials.pwd}@${credentials.site}?writeConcern=majority`;
+	var client = require('mongodb').MongoClient;
+	alert(data);
+	client.connect(mongouri, 
+		async function(error, utenti){
+			if(!error){
+				var utenti_norm = utenti.collection("utenti_norm");
+				await utenti_norm.insert({
+					name : "name",
+					surname : data[1],
+					email : data[2],
+					username : data[3],
+					pwd : data[4]});
+				db.close();
+				}
+				}
+	);
+}
+
+
+exports.insert = async function(credentials, data){
+	const mongouri = `mongodb://${credentials.user}:${credentials.pwd}@${credentials.site}?writeConcern=majority`;
+	try{
+		const mongo = new MongoClient(mongouri);
+		await mongo.connect();
+		let added = await mongo.db(dbname)
+					.collection(collection)
+					.insertMany(data);
+		await mongo.close();
+		return {
+			message: 'ok'
+		}
+	} catch (e) {
+		return e
+	}
+}
+
+exports.create = async function(credentials) {
+	const mongouri = `mongodb://${credentials.user}:${credentials.pwd}@${credentials.site}?writeConcern=majority`;
+
+	let debug = []
+	try {
+		debug.push(`Trying to connect to MongoDB with user: '${credentials.user}' and site: '${credentials.site}' and a ${credentials.pwd.length}-character long password...`)
+		const mongo = new MongoClient(mongouri);		
+		await mongo.connect();
+		debug.push("... managed to connect to MongoDB.")
+
+		debug.push(`Trying to read file '${fn}'... `)
+		let doc = await fs.readFile(rootDir + fn, 'utf8')
+		let data = JSON.parse(doc)
+		debug.push(`... read ${data.length} records successfully. `)
+
+		debug.push(`Trying to remove all records in table '${dbname}'... `)
+		let cleared = await mongo.db(dbname)
+					.collection(collection)
+					.deleteMany()
+		debug.push(`... ${cleared?.result?.n || 0} records deleted.`)
+					
+		debug.push(`Trying to add ${data.length} new records... `)
+		let added = await mongo.db(dbname)
+					.collection(collection)
+		 			.insertMany(data);	
+		debug.push(`... ${added?.result?.n || 0} records added.`)
+
+		await mongo.close();
+		debug.push("Managed to close connection to MongoDB.")
+
+		return {
+			message: `<h1>Removed ${cleared?.result?.n || 0} records, added ${added?.result?.n || 0} records</h1>`, 
+			debug: debug
+		}
+	} catch (e) {
+		e.debug = debug
+		return e
+	}
+}

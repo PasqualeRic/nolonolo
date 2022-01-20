@@ -1,0 +1,166 @@
+
+.container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    margin : auto;
+    padding: 0;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+/*@media screen and (min-width : 601px){*/
+.card_space{
+    width: 31%;
+    height: 450px;
+    background: #f2f2f2;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+    text-align: center;
+    border-radius : 10px;
+    margin : 10px;
+}
+
+.img{
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-size: cover;
+}
+
+.card_body{
+    margin: 25px;
+    line-height: 0.9;
+    margin-top: 2px;
+}
+
+.button a{
+    color : white;
+}
+
+
+
+
+.selectInput{
+    background-color: white;
+    border: 1px solid #047eae;
+    border-radius: 5px;
+    width: 200px;
+    height: 38px;
+    margin : 5px;
+    color : #047eae;
+}
+
+.selectInput:hover{
+    color : #047eae;
+}
+
+.option{
+    width: 200px;
+}
+
+.option:hover{
+    background-color: white;
+    color : #047eae;
+}
+
+
+.filter_box{
+    width: 100%;
+    height: 50px;
+    background-image: linear-gradient(to bottom right, #e3e4e2 40%, #e6e6e6);
+    justify-content: center;
+    display: flex;
+}
+
+#search_input{
+    width: 200px;  
+    height: 38px; 
+    margin: 5px;
+    border: 1px solid #047eae;
+    color : #047eae;
+    background-color: white;
+    border-radius: 5px;
+}
+
+#search_input::placeholder{
+    color : #025170;
+}
+
+#nol{
+    color : white;
+    background-color: #00A0E0;
+}
+
+.card_photo{
+    width: 100%;
+    height: 50%;
+}
+
+.popover{
+    margin-left: 10px;
+
+}
+
+.button button{
+    width: 150px;
+    height: 30px;
+    border : none;
+    border-radius: 5px;
+}
+
+.button button:focus{
+    border : 3px solid #025170;
+}
+
+@media screen and (max-width : 991px) and (min-width : 601px){
+    .card_space{
+        width: 44%;
+    }
+}
+@media screen and (max-width : 600px){
+
+    .filter_box select{
+        width: 100px;
+    }
+
+    #search_input{
+        width: 100px;
+    }
+
+    .form-control .me-2{
+        width: 50%;
+    }
+    .descrizione{
+        display: none;
+    }
+    .card_space{
+        width: 90%;
+        height: 250px;
+        background: #f2f2f2;
+        box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+        text-align: center;
+        border-radius : 10px;
+        margin : 10px;
+        font-size: 15px;
+    }
+
+
+    .card_body button{
+        grid-area: bottom;
+    }
+
+    .card_photo img{
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .button button{
+        width: 90px;
+        height: 25px;
+        font-size: 10px;
+    }
+}

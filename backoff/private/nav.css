@@ -1,0 +1,53 @@
+#nav{
+    background-image : linear-gradient(to bottom right, #00A0E0 50%, #007bac );
+}
+#nav a{
+    color : white;
+}
+
+.navbar-brand img{
+    width: 50px;
+}
+
+.dropdown-menu{
+    background-color : #007bac;
+}
+
+.dropdown-menu a:hover{
+    background-color: #00A0E0;
+}
+
+.container{
+    margin-top: 50px;
+}
+
+.table{
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+}
+
+.photo_space img{
+    width: 40px;
+    height: 40px;
+}
+
+.navbar-text{
+    display: flex;
+    justify-content: space-around;
+}
+
+#wlcm{
+    margin-right: 30px;
+    color : white;
+    margin-top : 4px
+}
+
+.dropdown-item:focus{
+    background-color: #00A0E0;
+}
+
+#login a, #logout a{
+    font-size: larger;
+    cursor: pointer;
+    text-decoration: none;
+}

@@ -1,0 +1,140 @@
+﻿<html>
+    <head>
+        <meta name="viewport" content="width = device-width, initial-scale=1.0">
+        <style>
+            body{
+                font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            }
+            .header{
+                width: 100%;
+                height: 10%;
+                display: flex;
+                flex-direction: row;
+                justify-content : space-between;
+                background-color: #6BA5F2;
+                align-items: center;
+            }
+            #logo img{
+                height: 94%;
+                margin-left: 3%;
+            }
+
+            #utilities{
+                margin-right: 3.5%;
+                height: 100%;
+                display : flex;
+                flex-direction: row;
+                align-items: center;
+                
+            }
+
+            .logreg{
+                border-radius: 10px;
+                background-color: #91BBF2;
+                color : white;
+                text-transform: uppercase;
+                padding: 5%;
+                text-decoration: none;
+                margin-right: 3%;
+            }
+
+            .logreg:hover{
+                background-color:#2372E1;
+            }
+
+            #hmb{
+                height: 30%;
+                color : white;
+            }
+
+            #hmb:hover{
+                cursor:pointer;
+            }
+
+            .sidebar{
+                position: absolute;
+                display: none;
+                background-color: #91BBF2;
+                border: 1px solid white;
+                color : white;
+                width: 15%;
+                transition: all .5s;
+            }
+
+            .sidebar ul{
+                list-style: none;
+                margin : 0;
+                padding: 0;
+            }
+
+            .sidebar.active {
+                right: 0;
+            }
+
+            .sidebar ul li{
+                cursor: pointer;
+                font-size: 20px;
+                padding: 20px 24px;
+            }
+
+            .sidebar ul li:hover{
+                background-color: #6BA5F2;
+                border-radius: 0px 40px 40px 0px;
+            }
+
+            .sidebar.show{
+                display: inline;
+                right : 0.35%;
+            }
+
+            .sidebar li:first-child{
+                float: right;
+            }
+
+            .sidebar li:first-child:hover{
+                background-color: #91BBF2;
+            }
+
+            @media screen and (max-width : 600px){
+                .sidebar{
+                    width: 50%;
+                }
+            }
+
+        </style>
+
+        <script>
+            function show(){
+                document.getElementById('sdbar').classList.add('show');
+            }
+            
+            function hide(){
+                document.getElementById('sdbar').classList.remove('show');
+            }
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <div id="logo"><img src="logo1.png" alt="logo tolotoloplus"></div>
+            <div id="utilities">
+                <a href="login.html" class="logreg">Accedi</a>
+                <a href="../registrati.html" class="logreg">Registrati</a>
+                <img src="hamburger1.png" alt="aprimenu" id="hmb" onclick = "show()">
+            </div>
+        </div>
+        <div class="sidebar" id="sdbar">
+            <ul>
+                <li onclick="hide()">x</li>
+                <li>
+                    I miei ordini
+                </li>
+                <li>
+                    Il mio account
+                </li>
+                <li>
+                    Esci
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>

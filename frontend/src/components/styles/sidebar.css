@@ -1,0 +1,53 @@
+.sideB{
+    display: none;
+}
+
+#welcome{
+    color : white;
+    margin-right: 20px;
+}
+
+.activeSideb{
+    display: inline;
+    position: absolute;
+    top : 0;
+    height: 500px;
+    right: 0;
+    background-color: #007bac;
+    border-radius: 0px 0px 0px 20px;
+    width: 300px;
+}
+
+.activeSideb ul{
+    margin-top: 50px;
+}
+
+.activeSideb li{
+    list-style-type: none;
+    margin-bottom: 30px;
+    padding: 10px;
+
+}
+
+.activeSideb li:first-of-type:hover{
+    background-color: #007bac;
+}
+
+.activeSideb li:first-of-type svg{
+    cursor: pointer;
+}
+
+.activeSideb li:hover{
+    background-color: #00A0E0;
+    border-radius: 10px 0 0 10px; 
+}
+
+.activeSideb a{
+    color : white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.activeSideb a:hover{
+    text-decoration: none;
+}

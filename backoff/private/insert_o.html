@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>BACKOFF</title>
+    <script src="//code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .container {
+            box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+            width: 900px;
+            border-radius: 10px;
+            margin: auto;
+            text-align: center;
+            
+        }
+
+        .confirm_edit {
+            background-color: #00A0E0;
+            text-align: center;
+            width: 300px;
+            border-radius: 6px;
+            border: none;
+            font-size: 15px;
+            font-weight: bold;
+            color: white;
+            padding: 15px;
+            margin-bottom: 10px;
+
+        }
+
+        .confirm_edit:hover {
+            background: #00C0FF;
+        }
+
+        .confirm_edit:active {
+            position: relative;
+            top: 1px;
+            left: 1px;
+        }
+
+        .action {
+            border: 0px;
+            background-color: transparent;
+            width: 10px;
+            align-items: initial;
+            text-align: center;
+            font-size: 15px;
+            font-weight: bold;
+            color: white;
+            padding: 15px;
+
+        }
+
+        .action:active {
+            position: relative;
+            top: 1px;
+            left: 1px;
+        }
+
+        .campi {
+            padding: 5px;
+        }
+
+        input[type=text],
+        input[type=file] {
+            width: 300px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 15px;
+            vertical-align: middle;
+            border: 1px solid #dddfe2;
+            margin: auto;
+        }
+
+        #result {
+            text-align: center;
+            color: red;
+        }
+
+        select {
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 15px;
+            vertical-align: middle;
+            border: 1px solid #dddfe2;
+            grid-area: right;
+            width: 300px;
+        }
+
+        .list-group-item.active {
+            background-color: #00C0FF;
+            border-color: #00C0FF;
+        }
+    </style>
+
+
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="footer.css">
+    <script>
+        function logout() {
+            localStorage.removeItem('token_bo');
+            window.location.href = "../b_off.html";
+        }
+        $(window).on('load', async function () {
+            let officer = '';
+            if (localStorage.getItem('token_bo') != null) {
+                $.ajax({
+                    url: '/getOfficer',
+                    method: 'GET',
+                    headers: { "Authorization": localStorage.getItem('token_bo') }
+                })
+                    .then(function (result) {
+                        if (result.title == 'utente trovato') {
+                            officer = result.user;
+                            $('#wlcm').text('Funzionario : ' + result.user.username);
+                            $('#login').css('display', 'none');
+                        }
+                        else {
+                            window.location.href = "../login.html";
+                        }
+
+                    });
+            }
+            else {
+                window.location.href = "../login.html";
+            }
+            fun = officer;
+            let products = await $.get('/getProducts');
+            for (var p in products) {
+                $('#productMag').append(`<option value='${products[p].nome}'>${products[p].nome} - ${products[p]._id}</option>`)
+            }
+        });
+
+        function insertProd() {
+
+            if ($('#nome').val() == '' || $('#cat').val() == '' || $('#cod').val() == '' || $('#prz').val() == '' || $('#cond').val() == '') {
+                $('#mex').text('Inserire tutti i campi');
+            }
+            else {
+
+                let descrizione = ' ';
+                if ($('#des').val() != '') {
+                    descrizione = $('#des').val();
+                }
+
+                let sconti = new Array();
+
+
+                let sconto = $('#sconti').val();
+
+                if(sconto!='--nessuno sconto--')
+                {
+                let descrizionesconto = '';
+
+              
+                    if (sconto == 'mcTerra') {
+                        descrizionesconto = "Ottieni uno sconto del 50% nei sabato interni del tuo periodo di noleggio, mentre i giorni festivi non li paghi!"
+                    }
+                    if (sconto == 'Ecologico') {
+                        descrizionesconto = "Noleggia il prodotto nei giorni feriali, e avrai uno sconto del 10% per ogni giorno del noleggio, il giusto premio per rispettare il pianeta";
+                    }
+                    if (sconto == 'nolomonday') {
+                        descrizionesconto = "Su questo prodotto potrai usufruire del nolomonday! Per i primi due lunedì del mese di Gennaio, 30% di sconto sul noleggio";
+                    }
+
+                    sconti.push({ nomesconto: sconto, descrizionesconto: descrizionesconto });
+                }
+                
+                console.log(sconti);
+                var dati = [$('#img')[0].files[0], $('#nome').val(), $('#cat').val(), descrizione, $('#cod').val(), $('#prz').val(), $('#cond').val()];
+
+
+                let nomefile = "null";
+                console.log(dati[0]);
+                if (dati[0] != undefined) {
+                    nomefile = dati[0].name;
+                    let formData = new FormData();
+                    formData.append('img', dati[0]);
+                    $.ajax({
+                        url: '/uploadPhoto',
+                        type: 'post',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (d) {
+                            console.log(d);
+                        }
+                    })
+                }
+                $.ajax({
+                    url: '/insertProduct',
+                    type: 'post',
+                    data: { nome: dati[1], categoria: dati[2], descrizione: dati[3], codice: dati[4], prezzo: dati[5], condizione: dati[6], nomefile: nomefile, sconti: sconti },
+                    success: function (d) {
+
+                        $('#mex').css({'color' : 'green'});
+                        $('#mex').text('Prodotto inserito correttamente, la pagina si aggiornerà automaticamente a breve');
+                        $('.confirm_edit').css({'display' : 'none'});
+                        window.setInterval('window.location.reload()', 3000);
+
+                    },
+                    error: function (d) {
+                        $('#mex').css({'color' : 'red'});
+                        $('#mex').text('Errore nel caricamento del prodotto');
+                    }
+                })
+            }
+
+        }
+        function insertMag(){
+            if ($('#codMag').val() == '' || $('#productMag').val() == '' || $('#przMag').val() == ''){
+                $('#mex').text('Inserire tutti i campi');
+            }
+            else{
+
+                var dati = [$('#productMag').val(), $('#przMag').val(), $('#codMag').val(), $('#condMag').val()];
+                console.log($('#codMag').val(), $('#productMag').val(), $('#przMag').val());
+                $.ajax({
+                        url: '/insertProduct',
+                        type: 'post',
+                        data: { nome: dati[0], codice: dati[2], prezzo: dati[1], condizione: dati[3]},
+                        success: function (d) {
+                            $('#mex').css({'color' : 'green'});
+                            $('#mex').text('Prodotto inserito correttamente, la pagina si aggiornerà automaticamente a breve');
+                            $('.confirm_edit').css({'display' : 'none'});
+                            window.setInterval('window.location.reload()', 3000);
+
+                        },
+                        error: function (d) {
+                            $('#mex').css({'color' : 'red'});
+                            $('#mex').text('Codice già esistente per questo prodotto');
+                        }
+                    })
+        }
+    }
+
+    </script>
+</head>
+
+<body>
+    <div class="page-container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="nav">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../b_off.html"><img src=".././N+.png" alt="logo nolonolo+"
+                        aria-hidden="true"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle" tabindex="0"
+                                style="background-color: transparent; border: 0px; color : white"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="true">
+                                Utenti
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="./insert_u.html">Aggiungi nuovo utente</a></li>
+                                <li><a class="dropdown-item" href="/private/handle_u.html">Gestisci utenti</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle"
+                                style="background-color: transparent; border: 0px; color : white"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Prodotti
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="./insert_o.html">Aggiungi prodotto</a></li>
+                                <li><a class="dropdown-item" href="./edit_o.html">Modifica prodotto</a></li>
+                                <li><a class="dropdown-item" href="./delete_o.html">Elimina prodotto</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle"
+                                style="background-color: transparent; border: 0px; color : white"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Noleggi
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="./create_r.html">Crea noleggio</a></li>
+                                <li><a class="dropdown-item" href="./handle_r.html">Gestisci noleggio</a></li>
+                                <li><a class="dropdown-item" href="./show_r.html">Visualizza fatture</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-text">
+                    <label id="wlcm"></label>
+                    <div id="logout"><a tabindex="0" role="button" onclick="logout()">Logout</a></div>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <h2>Inserisci prodotto</h2>
+            <p id="mex"></p>
+            <ul class="nav nav-tabs nav-tabs-icon-text" id="myTab" role="tablist">
+                <li class="nav-item"><a class="list-group-item list-group-item-action active red" id="tab1-tab"
+                        data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Aggiungi
+                        nuovo prodotto</a></li>
+                <li class="nav-item"><a class="list-group-item list-group-item-action" id="tab2-tab"
+                        data-bs-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">Aggiungi
+                        rifornimento in magazzino</a></li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane p-4 fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                    <div class="campi">
+                        <input type="file" name="srcimg" placeholder="Inserire link immagine" id="img" required
+                            aria-required="true">
+                    </div>
+                    <div class="campi">
+                        <input type="text" name="nome" placeholder="Nome" id="nome" required aria-required="true">
+                    </div>
+                    <div class="campi">
+                        <input type="text" name="categoria" placeholder="Categoria" id="cat" required
+                            aria-required="true">
+                    </div>
+                    <!-- <div class="checkform">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" role="switch" name="flexRadioDefault" id="mcTerra" value="mcTerra">
+                        <label class="form-check-label" for="mcTerra">mcTerra</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" role="switch" name="flexRadioDefault" id="Ecologico"
+                            value="Ecologico">
+                        <label class="form-check-label" for="Ecologico">Ecologico</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" role="switch" name="flexRadioDefault" id="nolomonday"
+                            value="nolomonday">
+                        <label class="form-check-label" for="nolomonday">nolomonday</label>
+                    </div>
+                </div> -->
+                    <div class="campi">
+                        <select class="campi" style="color : grey" name="condizioni" id="sconti">
+                            <option>--nessuno sconto--</option>
+                            <option>mcTerra</option>
+                            <option>Ecologico</option>
+                            <option>nolomonday</option>
+                        </select>
+                    </div>
+                    <div class="campi">
+                        <input type="text" name="descrizione" placeholder="Descrizione" id="des" required
+                            aria-required="true">
+                    </div>
+                    <div class="campi">
+                        <input type="text" name="codice" placeholder="Codice" id="cod" required aria-required="true">
+                    </div>
+                    <div class="campi">
+                        <input type="text" name="prezzo" placeholder="Prezzo" id="prz" required aria-required="true">
+                    </div>
+                    <div class="campi">
+                        <select class="campi" name="condizioni" id="cond">
+                            <option>Buone condizioni</option>
+                            <option>Pessime condizioni</option>
+                            <option>Ottime condizioni</option>
+                        </select>
+                    </div>
+                    <div class="button">
+                        <button onclick="insertProd()" class="confirm_edit" role="button">Inserisci prodotto</button>
+                    </div>
+                </div>
+
+                <div class="tab-pane p-4 fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                    <div class="campi">
+                        <p><label for="productMag">Prodotto</label><br><select id="productMag"></select></p>
+                    </div>
+                    <div class="campi">
+                        <input type="text" name="codice" placeholder="Codice" id="codMag" required aria-required="true">
+                    </div>
+                    <div class="campi">
+                        <input type="text" name="prezzo" placeholder="Prezzo" id="przMag" required aria-required="true">
+                    </div>
+                    <div class="campi">
+                        <select class="campi" name="condizioni" id="condMag">
+                            <option>Buone condizioni</option>
+                            <option>Pessime condizioni</option>
+                            <option>Ottime condizioni</option>
+                        </select>
+                    </div>
+                    <div class="button">
+                        <button onclick="insertMag()" class="confirm_edit" role="button">Inserisci prodotto</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <p id="result">
+        <p>
+        <footer class="footer-copyright text-center py-3" id="footer">
+            <div class="infobox">
+                <div class="left">
+                    <span>link utili</span>
+                    <ul>
+                        <li>
+                            <a href="/">Client</a>
+                        </li>
+                        <li>
+                            <a href="/manager">Manager</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="right">
+                    <img src='../N+.png' style="width: 40px;"></img><br></br>
+                    <span>NoloNolo+</span>
+                </div>
+            </div>
+            <div class="closing">
+                <span>Copyright © Tecnologie Web: NoloNolo+ 2021</span>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

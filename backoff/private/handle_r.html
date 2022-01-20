@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>BACKOFF</title>
+    <meta charset="utf-8">
+    <script src="//code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style type="text/css">
+
+
+        .container{
+            
+            box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 8px 16px rgb(0 0 0 / 10%);
+        
+            border-radius: 10px;
+            margin: auto;
+            text-align: center;
+            
+		}
+		
+
+        #scelta {
+            width: 25%;
+            padding: 2%;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            color: grey;
+        }
+
+        #tab_ris {
+            width: 90%;
+            margin: auto;
+            margin-top: 10px;
+        }
+
+        .cest {
+            width: 4%;
+            vertical-align: middle;
+            cursor: pointer;
+
+        }
+
+        .table {
+            width: 100%;
+            margin: auto;
+            
+            border: 1px solid lightgrey;
+        }
+
+
+        .table td,
+        .table th {
+
+            text-align: center;
+        }
+
+
+        .table th {
+            background-color: #00A0E0;
+            color: white;
+        }
+
+        .action {
+            border: 0px;
+            background-color: #00A0E0;
+            border-radius: 10px;
+            width: 120px;
+            align-items: initial;
+            color: white;
+            font-size: smaller;
+        }
+
+        .action:hover{
+            background-color: #007fb1;
+        }
+
+
+        .list-group-item.active {
+            background-color: #00C0FF;
+            border-color: #00C0FF;
+        }
+    </style>
+
+<link rel="stylesheet" href="nav.css">
+<link rel="stylesheet" href="footer.css">
+
+    <script>
+
+        function bill(id) {
+            window.location.href = `bill.html?id_fatt=${id}`;
+        }
+
+        function edit(id) {
+            window.location.href = `edit_r.html?id_fatt=${id}`;
+        }
+
+        var officer = '';
+        $(window).on('load', async function () {
+
+            
+            if(localStorage.getItem('token_bo')!=null)
+			{
+			    await $.ajax({
+                    url : '/getOfficer',
+                    method : 'GET',
+                    headers : {"Authorization": localStorage.getItem('token_bo')}
+                })
+				.then(function(result){
+                        if(result.title == 'utente trovato')
+                        {
+                            officer = result.user;
+						    $('#wlcm').text('Funzionario : ' + result.user.username);
+						    $('#login').css('display', 'none');
+                        }
+                        else{
+                            window.location.href="../login.html";
+                        }
+					
+				});
+			}
+			else{
+				window.location.href="../login.html";
+			}
+            let funzionario = officer._id;
+            $.ajax({
+                url: '/getReservations',
+                success: function (d) {
+                    console.log(d);
+                    d.reverse();
+                    let count = 0;
+                    for (var el in d) {
+                    
+                        if (d[el].funzionario_noleggio == 'not_confirmed' && (new Date(d[el].inizio_noleggio).setHours(0,0,0,0) <= new Date().setHours(0,0,0,0))) //se il noleggio è appena iniziato e il funzionario non ha ancora confermato l'avvenuto noleggio
+                        {
+                            count ++;
+                            $('#resultCer').append(`<tr><td tabindex="0">${(d[el]._id)}</td><td tabindex="0">${(d[el].usernamecliente)}</td><td tabindex="0">${(d[el].prodotto_nome)}</td><td tabindex="0">${(d[el].prodotto_codice)}</td><td tabindex="0">${(d[el].inizio_noleggio)} - ${(d[el].fine_noleggio)}</td><td tabindex="0">${(d[el].effettiva_restituzione)}</td><td tabindex="0">${(d[el].prezzo)}</td><td><button role="button" class="action" onclick="certificateInitRes(${JSON.stringify(d[el]).replace(/"/g, '&quot;')}, ${JSON.stringify(officer.username).replace(/"/g, '&quot;')})">Certifica avvenuto noleggio</button></td></tr>`);
+                        }
+
+                        if (d[el].funzionario_restituzione == 'not_confirmed' && d[el].effettiva_restituzione != 'not_confirmed' && d[el].funzionario_noleggio != "not_confirmed") //se il noleggio è stato restituito ma non ancora registrato dal funzionario
+                        {
+                            count ++;
+                            $('#resultCer').append(`<tr><td tabindex="0">${(d[el]._id)}</td><td tabindex="0">${(d[el].usernamecliente)}</td><td tabindex="0">${(d[el].prodotto_nome)}</td><td tabindex="0">${(d[el].prodotto_codice)}</td><td tabindex="0">${(d[el].inizio_noleggio)} - ${(d[el].fine_noleggio)}</td><td tabindex="0">${(d[el].effettiva_restituzione)}</td><td tabindex="0">${(d[el].prezzo)}</td><td><button class="action" role="button" onclick="certificateFinRes(${JSON.stringify(d[el]).replace(/"/g, '&quot;')}, ${JSON.stringify(officer.username).replace(/"/g, '&quot;')})">Certifica avvenuta restituzione</button></td></tr>`);
+                        }
+
+                        if (new Date(d[el].inizio_noleggio).setHours(0,0,0,0) > new Date().setHours(0,0,0,0)) //se si tratta di un noleggio nel futuro
+                        {   if(d[el].annotazioni != null && d[el].annotazioni!=undefined)
+                            {
+                                $('#resultFut').append(`<tr><td tabindex="0">${(d[el]._id)}</td><td tabindex="0">${(d[el].usernamecliente)}</td><td tabindex="0">${(d[el].prodotto_nome)}</td><td tabindex="0">${(d[el].prodotto_codice)}</td><td tabindex="0">${(d[el].inizio_noleggio)} - ${(d[el].fine_noleggio)}</td><td tabindex="0">${(d[el].effettiva_restituzione)}</td><td tabindex="0">${(d[el].prezzo)}</td><td><button class="action" role="button" style="background-color : red" onclick="edit('${JSON.stringify(d[el]._id).replace(/"/g, '&quot;')}')">Modifica noleggio futuro</button></td></tr>`);
+                            }
+                            else{
+                                $('#resultFut').append(`<tr><td tabindex="0">${(d[el]._id)}</td><td tabindex="0">${(d[el].usernamecliente)}</td><td tabindex="0">${(d[el].prodotto_nome)}</td><td tabindex="0">${(d[el].prodotto_codice)}</td><td tabindex="0">${(d[el].inizio_noleggio)} - ${(d[el].fine_noleggio)}</td><td tabindex="0">${(d[el].effettiva_restituzione)}</td><td tabindex="0">${(d[el].prezzo)}</td><td><button class="action" role="button" onclick="edit('${JSON.stringify(d[el]._id).replace(/"/g, '&quot;')}')">Modifica noleggio futuro</button></td></tr>`);
+                            }
+                        }
+                        if ((new Date(d[el].inizio_noleggio).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)) && (new Date(d[el].fine_noleggio).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)) && d[el].effettiva_restituzione == 'not_confirmed' && d[el].funzionario_noleggio != 'not_confirmed') // nel momento in cui si visitano gli ordini, il noleggio è in corso e l'avvenuto noleggio è già stato considerato
+                        {
+                            $('#resultCor').append(`<tr><td tabindex="0">${(d[el]._id)}</td><td tabindex="0">${(d[el].usernamecliente)}</td><td tabindex="0">${(d[el].prodotto_nome)}</td><td tabindex="0">${(d[el].prodotto_codice)}</td><td tabindex="0">${(d[el].inizio_noleggio)} - ${(d[el].fine_noleggio)}</td><td tabindex="0">${(d[el].effettiva_restituzione)}</td><td tabindex="0">${(d[el].prezzo)}</td><td><p>In corso</p></td></tr>`);
+                        }
+                        if (d[el].funzionario_restituzione != 'not_confirmed' && d[el].effettiva_restituzione != 'not_confirmed' && d[el].fattura == false) // vuol dire che anche l'avvenuta restituzione è stata confermata dal funzionario e manca solo il calcolo della fattura
+                        {
+                            $('#resultFat').append(`<tr><td tabindex="0">${(d[el]._id)}</td><td tabindex="0">${(d[el].usernamecliente)}</td><td tabindex="0">${(d[el].prodotto_nome)}</td><td tabindex="0">${(d[el].prodotto_codice)}</td><td tabindex="0">${(d[el].inizio_noleggio)} - ${(d[el].fine_noleggio)}</td><td tabindex="0">${(d[el].effettiva_restituzione)}</td><td tabindex="0">${(d[el].prezzo)}</td><td><button class="action" role="button" onclick="createBill(${JSON.stringify(d[el]).replace(/"/g, '&quot;')})">Crea fattura</button></td></tr>`);
+                        }
+                        if(new Date(d[el].fine_noleggio).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) && d[el].effettiva_restituzione == 'not_confirmed')
+                        {
+                            $('#resultCor').append(`<tr style="background-color : #FF9F9F"><td tabindex="0">${(d[el]._id)}</td><td tabindex="0">${(d[el].usernamecliente)}</td><td tabindex="0">${(d[el].prodotto_nome)}</td><td tabindex="0">${(d[el].prodotto_codice)}</td><td tabindex="0">${(d[el].inizio_noleggio)} - ${(d[el].fine_noleggio)}</td><td tabindex="0">${(d[el].effettiva_restituzione)}</td><td tabindex="0">${(d[el].prezzo)}</td><td><p>In corso e in ritardo</p></td></tr>`);
+                        }
+                    }
+
+                    if(count > 0)
+                    {
+                        $('#tab3-tab').append("<span style='margin-left : -15px' class='position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger'>"+count+"<span class='visually-hidden'>unread messages</span></span>");
+                    }
+                    $('#result').append('</tbody>');
+                }
+            });
+        });
+
+        function logout(){
+			localStorage.removeItem('token_bo');
+			window.location.href="../b_off.html";
+		}
+
+        async function createBill(res) {
+            let us_cliente = (await $.get('/getUserbyId', { id: res.cliente })).username;
+            let prod = await $.get('/getProdbyId', { codiceprodotto: res.prodotto_serie });
+            let nome_prod = prod.nome;
+            let sconti = '';
+            for (var i in prod.sconti) {
+                sconti = sconti + ' ' + prod.sconti[i].nomesconto;
+            }
+            let penale = '+0€';
+            let totale = 0;
+
+
+
+            eff = new Date(res.effettiva_restituzione);
+            fin = new Date(res.fine_noleggio);
+            if (eff > fin) {
+                let ritardo = (eff - fin) / 86400000;
+                totale = parseFloat(res.prezzo) + ritardo * (parseFloat(res.prezzo) * 0.1);
+                console.log((ritardo * (parseFloat(res.prezzo) * 0.1)).toFixed(2));
+                penale = '+ ' + (ritardo * (parseFloat(res.prezzo) * 0.1)).toFixed(2) + '€';
+            }
+            else {
+                totale = res.prezzo;
+            }
+
+            const data = {
+                id_fatt: res._id,
+                cliente: res.cliente,
+                us_cliente: us_cliente,
+                prodotto_nome: nome_prod,
+                prodotto_codice: res.prodotto_codice,
+                funzionario: res.funzionario_restituzione,
+                subtotale: res.prezzo,
+                periodo_noleggio: res.inizio_noleggio + ' - ' + res.fine_noleggio,
+                sconti: sconti,
+                penale: penale,
+                totale: totale + '€',
+                data_creazione: new Date().toISOString().substring(0, 10)
+            };
+
+            $.post('/createBill', data).then(res => {
+                $('#mex').css({'color' : 'green'});
+                $('#mex').text('Fattura creata, puoi trovarla in Noleggi -> Visualizza fatture. La pagina si aggiornerà automaticamente a breve');
+                window.setTimeout('window.location.reload()', 3000);
+            });
+        }
+
+
+        function certificateInitRes(res, fun) {
+            $.post('/certificateRes', { res: res._id, funzionario_n: fun }).then(res => {
+                if (res == 'Ok') {
+                    window.location.reload();
+                }
+            });
+        }
+
+        function certificateFinRes(res, fun) {
+            $.post('/certificateRes', { res: res._id, funzionario_r: fun }).then(res => {
+                if (res == 'Ok') {
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+    <title>Gestione noleggi</title>
+</head>
+
+<body>
+    <div class="page-container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="nav">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../b_off.html"><img src=".././N+.png" alt="logo nolonolo+"
+                        aria-hidden="true"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle" tabindex="0"
+                                style="background-color: transparent; border: 0px; color : white"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="true">
+                                Utenti
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="./insert_u.html">Aggiungi nuovo utente</a></li>
+                                <li><a class="dropdown-item" href="./handle_u.html">Gestisci utenti</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle"
+                                style="background-color: transparent; border: 0px; color : white"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Prodotti
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="./insert_o.html">Aggiungi prodotto</a></li>
+                                <li><a class="dropdown-item" href="./edit_o.html">Modifica prodotto</a></li>
+                                <li><a class="dropdown-item" href="./delete_o.html">Elimina prodotto</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <button class="nav-link dropdown-toggle"
+                                style="background-color: transparent; border: 0px; color : white"
+                                id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Noleggi
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="./create_r.html">Crea noleggio</a></li>
+                                <li><a class="dropdown-item" href="./handle_r.html">Gestisci noleggio</a></li>
+                                <li><a class="dropdown-item" href="./show_r.html">Visualizza fatture</a></li> 
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-text">
+                    <label id="wlcm"></label>
+                    <div id="logout"><a tabindex="0" role="button" onclick="logout()">Logout</a></div>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <h2>Gestione noleggi</h2>
+            <p id="mex"></p>
+            <ul class="nav nav-tabs nav-tabs-icon-text" id="myTab" role="tablist">
+                <li class="nav-item"><a class="list-group-item list-group-item-action active red" id="tab1-tab"
+                        data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Noleggi in corso</a></li>
+                <li class="nav-item"><a class="list-group-item list-group-item-action" id="tab2-tab"
+                        data-bs-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">Modifica noleggi futuri</a></li>
+                <li class="nav-item"><a class="list-group-item list-group-item-action" id="tab3-tab"
+                        data-bs-toggle="tab" href="#tab3" role="tab" aria-controls="tab3" aria-selected="false">Certifica noleggio/restituzione</a></li>
+                <li class="nav-item"><a class="list-group-item list-group-item-action" id="tab4-tab"
+                        data-bs-toggle="tab" href="#tab4" role="tab" aria-controls="tab4" aria-selected="false">Genera fatture per noleggi conclusi</a></li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+            <div class="tab-pane p-4 fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+            <table class="table" id="resultCor">
+                <thead>
+                    <tr>
+                        <th>Noleggio</th>
+                        <th>Cliente</th>
+                        <th>Prodotto</th>
+                        <th>Codice magazzino</th>
+                        <th>Periodo noleggio</th>
+                        <th>Effettiva restituzione</th>
+                        <th>Prezzo</th>
+                        <th>Azione</th>
+                    </tr>
+                </thead>
+                <tbody>
+            </table>
+            </div>
+            <div class="tab-pane p-4 fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                <table class="table" id="resultFut">
+                    <thead>
+                        <tr>
+                            <th>Noleggio</th>
+                            <th>Cliente</th>
+                            <th>Prodotto</th>
+                            <th>Codice magazzino</th>
+                            <th>Periodo noleggio</th>
+                            <th>Effettiva restituzione</th>
+                            <th>Prezzo</th>
+                            <th>Azione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                </table>
+            </div>
+            <div class="tab-pane p-4 fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+                <table class="table" id="resultCer">
+                    <thead>
+                        <tr>
+                            <th>Noleggio</th>
+                            <th>Cliente</th>
+                            <th>Prodotto</th>
+                            <th>Codice magazzino</th>
+                            <th>Periodo noleggio</th>
+                            <th>Effettiva restituzione</th>
+                            <th>Prezzo</th>
+                            <th>Azione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                </table>
+            </div>
+            <div class="tab-pane p-4 fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+                <table class="table" id="resultFat">
+                    <thead>
+                        <tr>
+                            <th>Noleggio</th>
+                            <th>Cliente</th>
+                            <th>Prodotto</th>
+                            <th>Codice magazzino</th>
+                            <th>Periodo noleggio</th>
+                            <th>Effettiva restituzione</th>
+                            <th>Prezzo</th>
+                            <th>Azione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+    <footer class="footer-copyright text-center py-3" id="footer">
+        <div class="infobox">
+            <div class="left">
+                <span>link utili</span>
+                <ul>
+                    <li>
+                        <a href="/">Client</a>
+                    </li>
+                    <li>
+                        <a href="/manager">Manager</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="right">
+                <img src='../N+.png' style="width: 40px;"></img><br></br>
+                <span>NoloNolo+</span>
+            </div>
+        </div>
+        <div class="closing">
+            <span>Copyright © Tecnologie Web: NoloNolo+ 2021</span>
+        </div>
+    </footer>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,121 @@
+@media screen and (min-width : 601px) {
+
+    .container_orders{
+        border-radius: 8px;
+        box-shadow: 0px 2px 4px rgb(0 0 0 / 10%), 0px 8px 16px rgb(0 0 0 / 10%), 0px 2px 4px rgb(0 0 0 / 10%), 0px 2px 4px rgb(0 0 0 / 10%);
+        padding: 5px;
+        width: 800px;
+        margin:auto;
+        margin-top : 100px;
+        margin-bottom : 100px;
+
+    }
+
+    .order{
+        width: 100%;
+        margin: auto;
+        height: 80px;
+        margin-top: 8px;
+    }
+
+    .order_title{
+        color : white;
+        padding: 3px;
+        display: grid;
+        grid-template-areas: "left right";
+        grid-template-columns: 75% 25%;
+    }
+
+
+    #status{
+        grid-area: right;
+    }
+
+    .order_box{
+        display: grid;
+        grid-template-areas: "left right";
+        grid-template-columns: 80% 20%;
+        height: 30px;
+    }
+
+    .order_box ul li{
+        display: inline-flex;
+        left: 0;
+        margin-right: 60px;
+    }
+
+    .order_box label{
+        grid-area : right;
+    }
+
+}
+
+@media screen and (max-width : 600px){
+    .order_box li:nth-child(1), .order_box li:nth-child(3){
+        display: none;
+    }
+    #status{
+        display: none;
+    }
+
+    .order{
+        margin-top: 10px;
+    }
+
+    .order_box{
+        display: grid;
+        grid-template-areas: "left right";
+        grid-template-columns: 90% 10%;
+        margin-bottom: 4px;
+        margin-top: 0px;
+    }
+
+    .order_box label{
+        grid-area: right;
+    }
+
+    .order_box li:nth-child(2){
+        grid-area : left;
+        list-style: none;
+        font-size: 10px;
+    }
+}
+
+.div_logo{
+    background-image: linear-gradient(to bottom right, #00A0E0 10%, #007bac );
+    border-radius: 0px 0px 20px 20px;
+}
+
+.order_box{
+    background-image: linear-gradient(to bottom right, #F2F2F2 10%, #D9D9D9);
+}
+
+.order_title{
+    background-image: linear-gradient(to bottom right, #00A0E0 10%, #007bac );
+    color : white;
+    
+}
+
+.early{
+    margin-right: -10px;
+    margin-left: -60px;
+    font-size: small;
+    border-radius: 5px;
+    border: 0px;
+    color: white;
+    background-color: #00A0E0;
+}
+
+.early:hover{
+    background-color: #0080b3;
+}
+
+.headFot{
+    background-color: #00A0E0;
+    color : white;
+}
+
+.modalButton{
+    border:0px;
+    border-radius : 2px;
+}

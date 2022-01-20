@@ -1,0 +1,87 @@
+.bill{
+    width: 650px;
+    margin: auto;
+    height: 600px;
+    box-shadow: 0px 2px 4px rgb(0 0 0 / 10%), 0px 8px 16px rgb(0 0 0 / 10%), 0px 2px 4px rgb(0 0 0 / 10%), 0px 2px 4px rgb(0 0 0 / 10%);
+    margin-top: 50px;
+    background-color: white;
+}
+
+.bill_row{
+    background-color: #FAFAFA;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.bill_row_tables{
+    display: grid;
+    grid-template-areas: "left right";
+    grid-template-columns: 30% 70%;
+    padding: 10px;
+}
+
+.nolo_info{
+    line-height: 0.4;
+    padding: 10px;
+}
+
+.info_bill table{
+    margin-bottom: 10px;
+}
+
+th{
+    background-color: #00A0E0;
+    color: white;
+}
+
+.bill_body{
+    padding: 10px;
+}
+
+.bill_body table{
+    width: 100%;
+}
+
+.price_handle{
+    padding: 10px;
+    float: right;
+}
+
+td{
+    background-color: #FAFAFA;
+}
+
+#thx{
+    margin-left: 10px;
+    font-style: italic;
+    color : #00A0E0;
+}
+
+@media screen and (max-width : 601px){
+
+    .bill_row_tables{
+        display: grid;
+        grid-template-areas: "left right";
+        grid-template-columns: 25% 75%;
+        padding: 10px;
+    }
+
+    .bill{
+        width: 95%;
+    }
+
+    .info_bill{
+        width: 80%;
+    }
+
+    .info_bill table td{
+        font-size: 12px;
+    }
+
+    .nolo_info{
+        font-size : smaller;
+        line-height: 0.8;
+    }
+}

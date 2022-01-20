@@ -1,0 +1,101 @@
+.nol_container{
+    margin: auto;
+    margin-top : 50px;
+    margin-bottom : 50px;
+    width: 600px;
+    border-radius: 10px;
+    height: 600px;
+    background-image: linear-gradient(to bottom right, #00A0E0 10%, #007bac );
+}
+
+.div_logo{
+    width: 60px;
+    margin: auto;
+}
+
+#logo{
+    width: 60px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#conferma_noleggio:disabled{
+    visibility: visible;
+}
+
+.description_box{
+    display: flex;
+    flex-direction: row;
+}
+
+.des_img{
+    margin-left: 10px;
+    margin-right: 10px;
+
+}
+
+.des_img img{
+    width : 160px; 
+    height : 120px; 
+    object-fit :contain
+}
+
+.des_text{
+    color : white;
+}
+
+.form_space{
+    margin-left: 10px;
+    margin-top : 20px;
+    color : white;
+    width: 100%;
+}
+
+.form_space input{
+    width: 400px;
+    border-radius: 5px;
+    border : 1px solid white;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    color : #007bac;
+}
+
+.buttons{
+    text-align: center;
+    margin-left: 0px;
+}
+
+.messages{
+    
+    text-align: center;
+    margin-right: 20px;
+}
+
+@media screen and (max-width : 600px) {
+    .nol_container{
+        width: 100%;
+        height: 650px;
+    }
+
+    .form_space{
+        width: 100%;
+    }
+
+    .form_space input{
+        width: 80%;
+    }
+
+    .buttons{
+        width: 100%;
+    }
+
+    .logreg{
+        margin-right: 20px;
+        width: 80%;
+    }
+    
+    .des_text{
+        margin-left : 10px;
+    }
+}
+
